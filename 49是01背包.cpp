@@ -15,7 +15,7 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-
+//（DFS回溯）：用"暴力搜索"思想，尝试所有可能的组合，找到最优解
 // 全局变量存储物品信息和结果
 vector<int> w, v;  // 体积和价值
 int n, capacity;
