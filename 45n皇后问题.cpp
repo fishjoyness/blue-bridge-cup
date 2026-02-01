@@ -1,82 +1,50 @@
-#include <iostream>
+#include <bits/stdc++.h> 
 using namespace std;
 
-const int N = 20; // 定义一个足够大的常量N
-int n;
-int ans = 0; // 用来记录解的个数
-int vis[N][N]; // 表示被多少个皇后占用了
+int N, K;
 
-// 深度优先搜索函数
-void dfs(int dep) {
-    // 如果已经处理完第 n 行，说明找到了一个解
-    if (dep == n + 1) {
-        ans++;
+// path 改成 vector 类型，这就是一个“智能数组”
+vector<int> path; 
+
+// u: 当前正在考虑第几个数
+// cnt: 当前已经选了几个数 (其实这里也可以不用 cnt，直接用 path.size()，但为了让你对比方便，先保留着)
+void dfs(int u, int cnt) {
+    // 1. 剪枝：如果已经选够了 K 个，就输出
+    if (cnt == K) {
+        // vector 可以直接用范围 for 循环遍历，非常清爽
+        for (int val : path) {
+            cout << val << " ";
+        }
+        cout << endl;
         return;
     }
 
-    // 遍历当前行的每一列
-    for (int i = 1; i <= n; ++i) {
-        // 如果当前位置 (dep, i) 被占用，则跳过
-        if (vis[dep][i]) {
-            continue;
-        }
-
-        // --- 修改状态：将皇后放置在 (dep, i) 位置 ---
-        // 1. 标记第 i 列
-        for (int _i = 1; _i <= n; ++_i) {
-            vis[_i][i]++;
-        }
-        // 2. 标记主对角线 (从左上到右下)
-        for (int _i = dep, _j = i; _i >= 1 && _j >= 1; --_i, --_j) {
-            vis[_i][_j]++;
-        }
-        // 3. 标记副对角线 (从右上到左下)
-        for (int _i = dep, _j = i; _i <= n && _j <= n; ++_i, ++_j) {
-            vis[_i][_j]++;
-        }
-        // 4. 标记另一条主对角线 (从左下到右上)
-        for (int _i = dep, _j = i; _i <= n && _j >= 1; ++_i, --_j) {
-            vis[_i][_j]++;
-        }
-        // 5. 标记另一条副对角线 (从右下到左上)
-        for (int _i = dep, _j = i; _i >= 1 && _j <= n; --_i, ++_j) {
-            vis[_i][_j]++;
-        }
-
-        // 递归到下一行
-        dfs(dep + 1);
-
-        // --- 恢复现场：回溯，取消标记 ---
-        // 1. 取消第 i 列的标记
-        for (int _i = 1; _i <= n; ++_i) {
-            vis[_i][i]--;
-        }
-        // 2. 取消主对角线的标记
-        for (int _i = dep, _j = i; _i >= 1 && _j >= 1; --_i, --_j) {
-            vis[_i][_j]--;
-        }
-        // 3. 取消副对角线的标记
-        for (int _i = dep, _j = i; _i <= n && _j <= n; ++_i, ++_j) {
-            vis[_i][_j]--;
-        }
-        // 4. 取消另一条主对角线的标记
-        for (int _i = dep, _j = i; _i <= n && _j >= 1; ++_i, --_j) {
-            vis[_i][_j]--;
-        }
-        // 5. 取消另一条副对角线的标记
-        for (int _i = dep, _j = i; _i >= 1 && _j <= n; --_i, ++_j) {
-            vis[_i][_j]--;
-        }
+    // 2. 边界条件：数都考虑完了，就返回
+    if (u > N) {
+        return;
     }
+
+    // --- 核心分支 ---
+
+    // 分支 1：我要选第 u 个数
+    // vector 有个神奇的功能叫 push_back，意思是在袋子尾部塞进一个元素
+    path.push_back(u); 
+    dfs(u + 1, cnt + 1);
+    
+    // 【关键点】回溯现场！
+    // 既然选了 u，递归回来后，如果不把这个 u 拿出来，它就会留在袋子里影响“不选”的那个分支
+    // pop_back 就是把尾部最后一个元素扔掉
+    path.pop_back(); 
+
+
+    // 分支 2：我不选第 u 个数
+    // 这里的 path 里干干净净，没有 u，所以直接往下走
+    dfs(u + 1, cnt);
 }
 
 int main() {
-    // 输入 N
-    cin >> n;
-    // 从第 1 行开始搜索
-    dfs(1);
-    // 输出解的个数
-    cout << ans << endl;
+    cin >> N >> K;
+    dfs(1, 0);
     return 0;
 }
 
