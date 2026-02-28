@@ -1,14 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 int main(){
-	string str={"hello,world"};
-	int length=str.length();
-	size_t pos=str.find("hello");
-	if (pos!=std::npos){
-		cout<<pos<<'\n';
+	ios::sync_with_stdio(0),cin.tie(0),cout.tie(0);
+	int n;cin>>n;
+	vector<long long> s(n+1,0);
+	for(int i=1;i<=n;++i){
+		int x;cin>>x;
+		s[i]=s[i-1]+x;
 	}
-	else{
-		cout<<"ц╩спур╣╫"<<'\n'; 
+	
+	int m;cin>>m;
+	while(m--){
+		int l,r;cin>>l>>r;
+		cout<<s[r]-s[l-1]<<'\n';
 	}
 	return 0;
 } 
